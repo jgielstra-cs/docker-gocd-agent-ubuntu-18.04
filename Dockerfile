@@ -29,7 +29,8 @@ RUN \
 RUN unzip /tmp/go-agent-21.2.0-12498.zip -d /
 RUN mv /go-agent-21.2.0 /go-agent && chown -R ${UID}:0 /go-agent && chmod -R g=u /go-agent
 
-FROM ubuntu:bionic
+# Podman/Buildah are part of Ubuntu >=20.10
+FROM ubuntu:groovy
 
 LABEL gocd.version="21.2.0" \
   description="GoCD agent based on ubuntu version 18.04" \
@@ -56,7 +57,7 @@ RUN \
 # add user to root group for gocd to work on openshift
   useradd -u ${UID} -g root -d /home/go -m go && \
   apt-get update && \
-  apt-get install -y git subversion mercurial openssh-client bash unzip curl locales procps sysvinit-utils coreutils && \
+  apt-get install -y git subversion mercurial openssh-client bash unzip curl locales procps sysvinit-utils coreutils buildah podman && \
   apt-get autoclean && \
   echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen && /usr/sbin/locale-gen && \
   curl --fail --location --silent --show-error 'https://github.com/AdoptOpenJDK/openjdk15-binaries/releases/download/jdk-15.0.2%2B7/OpenJDK15U-jre_x64_linux_hotspot_15.0.2_7.tar.gz' --output /tmp/jre.tar.gz && \
